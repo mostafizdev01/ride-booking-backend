@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import httpStatus from "http-status-codes";
+import httpStatus, { StatusCodes } from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
 import { UserServices } from "./user.service";
 
@@ -16,6 +16,7 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
         data: user,
     })
 })
+
 const updateUser = catchAsync(async (req: Request, res: Response) => {
     const userId = req.params.id;
 
@@ -44,6 +45,7 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
         meta: result.meta
     })
 })
+
 const getMe = catchAsync(async (req: Request, res: Response) => {
     const decodedToken = req.user as JwtPayload
     const result = await UserServices.getMe(decodedToken.userId);
@@ -55,6 +57,7 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
         data: result.data
     })
 })
+
 const getSingleUser = catchAsync(async (req: Request, res: Response) => {
     const id = req.params.id;
     const result = await UserServices.getSingleUser(id);
@@ -66,11 +69,39 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
     })
 })
 
+const approveDriver = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { isApproved } = req.body;
 
+    const driver = await UserServices.approveDriver(id, isApproved);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: "Driver approval status updated successfully",
+        data: driver,
+    });
+});
+
+const blockUser = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { isBlocked } = req.body;
+
+    const user = await UserServices.blockUser(id, isBlocked);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: "User block status updated successfully",
+        data: user,
+    });
+});
 export const UserControllers = {
     createUser,
     getAllUsers,
     getSingleUser,
     updateUser,
-    getMe
+    getMe,
+    blockUser,
+    approveDriver
 }

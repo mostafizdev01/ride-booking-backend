@@ -1,5 +1,5 @@
 import bcryptjs from "bcryptjs";
-import httpStatus from "http-status-codes";
+import httpStatus, { StatusCodes } from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
 import { envVars } from "../../config/env";
 import { userSearchableFields } from "./user.constant";
@@ -81,8 +81,6 @@ const updateUser = async (userId: string, payload: Partial<IUser>, decodedToken:
     return newUpdatedUser;
 };
 
-
-
 const getAllUsers = async (query: Record<string, string>) => {
 
     const queryBuilder = new QueryBuilder(User.find(), query)
@@ -103,12 +101,14 @@ const getAllUsers = async (query: Record<string, string>) => {
         meta
     }
 };
+
 const getSingleUser = async (id: string) => {
     const user = await User.findById(id).select("-password");
     return {
         data: user
     }
 };
+
 const getMe = async (userId: string) => {
     const user = await User.findById(userId).select("-password").populate("rides");
     return {
@@ -116,10 +116,41 @@ const getMe = async (userId: string) => {
     }
 };
 
+
+const approveDriver = async (driverId: string, isApproved: boolean) => {
+    const driver = await User.findById(driverId);
+    if (!driver) {
+        throw new AppError(StatusCodes.NOT_FOUND, "Driver not found");
+    }
+
+    if (driver.role !== Role.DRIVER) {
+        throw new AppError(StatusCodes.BAD_REQUEST, "This user is not a driver");
+    }
+
+    driver.isApproved = isApproved;
+    await driver.save();
+
+    return driver;
+};
+
+const blockUser = async (userId: string, isBlocked: boolean) => {
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new AppError(StatusCodes.NOT_FOUND, "User not found");
+    }
+
+    user.isBlocked = isBlocked;
+    await user.save();
+
+    return user;
+};
+
 export const UserServices = {
     createUser,
     getAllUsers,
     getSingleUser,
     updateUser,
-    getMe
+    getMe,
+    blockUser,
+    approveDriver
 }
