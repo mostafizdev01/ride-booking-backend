@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RideRoutes = void 0;
+const express_1 = require("express");
+const ride_controller_1 = require("./ride.controller");
+const user_interface_1 = require("../user/user.interface");
+const checkAuth_1 = require("../../middleware/checkAuth");
+const router = (0, express_1.Router)();
+router.post("/request", (0, checkAuth_1.checkAuth)(user_interface_1.Role.RIDER), ride_controller_1.requestRide);
+router.post("/nearby", (0, checkAuth_1.checkAuth)(user_interface_1.Role.DRIVER), ride_controller_1.getNearbyRides);
+router.patch("/:rideId/accept", (0, checkAuth_1.checkAuth)(user_interface_1.Role.DRIVER), ride_controller_1.acceptRide);
+router.patch("/:rideId/status", (0, checkAuth_1.checkAuth)(user_interface_1.Role.DRIVER), ride_controller_1.updateRideStatus);
+router.patch("/:rideId/cancel", (0, checkAuth_1.checkAuth)(user_interface_1.Role.RIDER), ride_controller_1.cancelRide);
+router.get("/me", (0, checkAuth_1.checkAuth)(user_interface_1.Role.RIDER), ride_controller_1.getMyRides);
+router.get("/earnings", (0, checkAuth_1.checkAuth)(user_interface_1.Role.DRIVER), ride_controller_1.getDriverEarnings);
+router.get("/", (0, checkAuth_1.checkAuth)(user_interface_1.Role.ADMIN, user_interface_1.Role.SUPER_ADMIN), ride_controller_1.getAllRides);
+router.post("/:id/rate", (0, checkAuth_1.checkAuth)(user_interface_1.Role.RIDER), ride_controller_1.rateDriver);
+exports.RideRoutes = router;
