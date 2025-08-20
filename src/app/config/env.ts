@@ -29,6 +29,7 @@ interface EnvVars {
         SSL_SUCCESS_BACKEND_URL: string
         SSL_FAIL_BACKEND_URL: string
         SSL_CANCEL_BACKEND_URL: string
+        SSL_IPN_URL: string
     }
     CLOUDINARY: {
         CLOUDINARY_CLOUD_NAME: string;
@@ -42,6 +43,11 @@ interface EnvVars {
         SMTP_HOST: string;
         SMTP_FROM: string;
     };
+
+    REDIS_HOST: string;
+    REDIS_PORT: string;
+    REDIS_USERNAME: string;
+    REDIS_PASSWORD: string;
 }
 
 const loadEnvVars = () => {
@@ -75,6 +81,11 @@ const loadEnvVars = () => {
         "SMTP_HOST",
         "SMTP_USER",
         "SMTP_FROM",
+        "REDIS_HOST",
+        "REDIS_PORT",
+        "REDIS_USERNAME",
+        "REDIS_PASSWORD",
+        "SSL_IPN_URL"
     ];
 
     requiredEnvVars.forEach((envVar) => {
@@ -111,13 +122,14 @@ const loadEnvVars = () => {
             SSL_SUCCESS_BACKEND_URL: process.env.SSL_SUCCESS_BACKEND_URL as string,
             SSL_FAIL_BACKEND_URL: process.env.SSL_FAIL_BACKEND_URL as string,
             SSL_CANCEL_BACKEND_URL: process.env.SSL_CANCEL_BACKEND_URL as string,
+            SSL_IPN_URL: process.env.SSL_IPN_URL as string
         },
         CLOUDINARY: {
             CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
             CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,
             CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
         },
-        
+
         EMAIL_SENDER: {
             SMTP_USER: process.env.SMTP_USER as string,
             SMTP_PASS: process.env.SMTP_PASS as string,
@@ -125,6 +137,11 @@ const loadEnvVars = () => {
             SMTP_HOST: process.env.SMTP_HOST as string,
             SMTP_FROM: process.env.SMTP_FROM as string,
         },
+
+        REDIS_HOST: process.env.REDIS_HOST as string,
+        REDIS_PORT: process.env.REDIS_PORT as string,
+        REDIS_USERNAME: process.env.REDIS_USERNAME as string,
+        REDIS_PASSWORD: process.env.REDIS_PASSWORD as string,
     }
 }
 

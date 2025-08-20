@@ -3,6 +3,7 @@ import app from "./app";
 import { Server } from "http";
 import dotenv from "dotenv";
 import seedSuparAdmin from "./app/utilis/seedSuparAdmin";
+import { connectRedis } from "./app/config/redis,config";
 dotenv.config();
 
 const port = process.env.PORT || 3000;
@@ -25,6 +26,7 @@ async function main() {
 }
 
 (async () => {
+    await connectRedis()
     await main();
     await seedSuparAdmin()
 })()

@@ -8,6 +8,7 @@ const seedSuparAdmin = async () => {
         const isSuparAdmin = await User.findOne({ email: envVars.SUPAR_ADMIN_EMAIL })
 
         if (isSuparAdmin) {
+            console.log("already supar admin added");
             return
         }
         const hasedPassword = await bcryptjs.hash(envVars.SUPAR_ADMIN_PASSWORD, Number(envVars.BCRYPT_SALT_ROUND))
@@ -31,6 +32,7 @@ const seedSuparAdmin = async () => {
         }
 
         await User.create(payload)
+        console.log("user from suparadmin");
 
     } catch (error) {
         console.log(error);
