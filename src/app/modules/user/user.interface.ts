@@ -32,7 +32,7 @@ export interface IUser {
     isApproved?: boolean;
     vehicleInfo?: IVehicleInfo;
     totalEarnings?: number;
-    currentLocation: {
+    currentLocation?: {
         type: "Point";
         coordinates: [number, number];
     };

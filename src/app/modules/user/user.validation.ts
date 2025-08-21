@@ -59,7 +59,7 @@ export const createUserZodSchema = z.object({
     coordinates: z
       .array(z.number())
       .length(2, { message: "Coordinates must be an array of [lng, lat]" }),
-  }),
+  }).optional(),
   isBlocked: z
     .boolean()
     .optional()
@@ -111,7 +111,7 @@ export const updateUserZodSchema = z.object({
     coordinates: z
       .array(z.number())
       .length(2, { message: "Coordinates must be an array of [lng, lat]" }),
-  }),
+  }).optional(),
   isBlocked: z
     .boolean()
     .optional()

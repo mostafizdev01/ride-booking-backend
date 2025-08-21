@@ -16,6 +16,12 @@ export interface ILocation {
   coordinates: [number, number]; // [lng, lat]
 }
 
+export enum RideTypes {
+  ECONOMY = "economy",
+  COMFORT = "comfort",
+  PREMIUM = "premium",
+}
+
 export interface IRide {
   rider: Types.ObjectId;
   driver?: Types.ObjectId;
@@ -23,6 +29,8 @@ export interface IRide {
   destinationLocation: ILocation;
   fare: number;
   status: RideStatus;
+  rideTypes: RideTypes;
+  paymentMethod: "card" | "cash";
   cancellationReason?: string;
   rating?: {
     score: number;

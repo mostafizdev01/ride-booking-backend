@@ -19,7 +19,7 @@ const requestRide = async (payload: Partial<IRide>, riderId: string) => {
     ...payload,
     rider: new Types.ObjectId(riderId),
     status: RideStatus.REQUESTED,
-    timestamps: { requestedAt: new Date() },
+    timestamps: { requestedAt: payload.timestamps?.requestedAt || new Date() },
   });
 };
 

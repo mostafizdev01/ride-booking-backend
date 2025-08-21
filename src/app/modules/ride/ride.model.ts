@@ -1,12 +1,12 @@
 // ride.model.ts
 import { Schema, model } from "mongoose";
-import { IRide, ILocation, RideStatus } from "./ride.interface";
+import { IRide, ILocation, RideStatus, RideTypes } from "./ride.interface";
 
 const locationSchema = new Schema<ILocation>(
   {
     address: { type: String, required: true },
     type: { type: String, enum: ["Point"], default: "Point" },
-    coordinates: { type: [Number], required: true }, // [lng, lat]
+    coordinates: { type: [Number], required: true }, 
   },
   { _id: false, versionKey: false }
 );
@@ -19,6 +19,11 @@ const rideSchema = new Schema<IRide>(
     destinationLocation: { type: locationSchema, required: true },
     fare: { type: Number, required: true },
     status: { type: String, enum: Object.values(RideStatus), default: RideStatus.REQUESTED, index: true },
+    rideTypes: {
+      type: String,
+      enum: Object.values(RideTypes),
+    },
+    paymentMethod: { type: String, enum: ["card", "cash"], required: true },
     cancellationReason: { type: String },
     timestamps: {
       requestedAt: { type: Date, default: Date.now },

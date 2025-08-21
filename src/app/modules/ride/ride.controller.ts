@@ -19,6 +19,7 @@ export const requestRide = catchAsync(async (req: Request, res: Response) => {
 export const getNearbyRides = catchAsync(async (req: Request, res: Response) => {
 
   const { coordinates } = req.body;
+  console.log(req.body);
   const rides = await RideService.getNearbyRides(coordinates);
   sendResponse(res, {
     success: true,
