@@ -19,7 +19,7 @@ export const requestRide = catchAsync(async (req: Request, res: Response) => {
 export const getNearbyRides = catchAsync(async (req: Request, res: Response) => {
 
   const { coordinates } = req.body;
-  console.log(req.body);
+
   const rides = await RideService.getNearbyRides(coordinates);
   sendResponse(res, {
     success: true,
@@ -44,8 +44,23 @@ export const acceptRide = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// Get single ride for Driver
+export const getSingleRide = catchAsync(async (req: Request, res: Response) => {
+
+  const driverId = (req.user as any).userId;
+  
+  const ride = await RideService.getSingleRide(driverId);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "Ride fetched successfully",
+    data: ride,
+  });
+});
+
 // Driver: Update ride status
 export const updateRideStatus = catchAsync(async (req: Request, res: Response) => {
+
   const { status } = req.body;
   const ride = await RideService.updateRideStatus(req.params.rideId, (req.user as any).userId, status);
 

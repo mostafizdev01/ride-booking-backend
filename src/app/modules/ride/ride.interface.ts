@@ -13,7 +13,7 @@ export enum RideStatus {
 export interface ILocation {
   address: string;
   type: "Point";
-  coordinates: [number, number]; // [lng, lat]
+  coordinates: [number, number]; 
 }
 
 export enum RideTypes {

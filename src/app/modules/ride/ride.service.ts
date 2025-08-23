@@ -36,6 +36,7 @@ const getNearbyRides = async (coordinates: [number, number]) => {
 };
 
 const acceptRide = async (rideId: string, driverId: string) => {
+
   const ride = await Ride.findById(rideId);
   if (!ride) throw new AppError(StatusCodes.NOT_FOUND, "Ride not found");
   if (ride.driver) throw new AppError(StatusCodes.BAD_REQUEST, "Ride already accepted");
@@ -51,12 +52,26 @@ const acceptRide = async (rideId: string, driverId: string) => {
   await ride.save();
 
   await User.findByIdAndUpdate(driverId, {
-    $addToSet: { rides: ride._id }  
+    $addToSet: { rides: ride._id }
   });
 
   await User.findByIdAndUpdate(ride.rider, {
     $addToSet: { rides: ride._id }
   });
+  return ride;
+};
+
+const getSingleRide = async (driverId: string) => {
+
+  if (!driverId) throw new AppError(StatusCodes.BAD_REQUEST, "Driver ID is required");
+
+  const ride = await Ride.findOne({ driver: new Types.ObjectId(driverId) })
+    .populate("rider", "name email")
+    .populate("driver", "name email vehicleInfo")
+    .sort({ createdAt: -1 });
+  if (!ride) throw new AppError(StatusCodes.NOT_FOUND, "Ride not found");
+  if (ride.driver?._id?.toString() !== driverId)
+    throw new AppError(StatusCodes.FORBIDDEN, "You are not assigned to this ride");
   return ride;
 };
 
@@ -163,6 +178,7 @@ export const RideService = {
   requestRide,
   getNearbyRides,
   acceptRide,
+  getSingleRide,
   updateRideStatus,
   cancelRide,
   getMyRides,
