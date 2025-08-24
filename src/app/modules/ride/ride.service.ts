@@ -98,6 +98,7 @@ const updateRideStatus = async (rideId: string, driverId: string, status: RideSt
 
 const cancelRide = async (rideId: string, riderId: string, reason?: string) => {
   const ride = await Ride.findById(rideId);
+  console.log(ride);
   if (!ride) throw new AppError(StatusCodes.NOT_FOUND, "Ride not found");
   if (ride.rider.toString() !== riderId)
     throw new AppError(StatusCodes.FORBIDDEN, "You can't cancel this ride");
@@ -113,7 +114,8 @@ const cancelRide = async (rideId: string, riderId: string, reason?: string) => {
 };
 
 const getMyRides = async (riderId: string) => {
-  return await Ride.find({ rider: new Types.ObjectId(riderId) }).sort({ createdAt: -1 });
+  return await Ride.find({ rider: new Types.ObjectId(riderId) }).populate("driver")
+  .sort({ createdAt: -1 });
 };
 
 const getAllRides = async (query: Record<string, string>) => {

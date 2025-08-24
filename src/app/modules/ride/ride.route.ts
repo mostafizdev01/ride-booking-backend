@@ -8,12 +8,12 @@ const router = Router();
 router.post("/request", checkAuth(Role.RIDER), requestRide);
 router.post("/nearby", checkAuth(Role.DRIVER), getNearbyRides);
 router.get("/driver/active-ride", checkAuth(Role.DRIVER), getSingleRide);
+router.get("/earnings", checkAuth(Role.DRIVER), getDriverEarnings);
+router.get("/me/history", checkAuth(Role.RIDER), getMyRides);
+router.get("/", checkAuth(Role.ADMIN , Role.SUPER_ADMIN), getAllRides);
 router.patch("/:rideId/accept", checkAuth(Role.DRIVER), acceptRide);
 router.patch("/:rideId/status", checkAuth(Role.DRIVER), updateRideStatus);
 router.patch("/:rideId/cancel", checkAuth(Role.RIDER), cancelRide);
-router.get("/me", checkAuth(Role.RIDER), getMyRides);
-router.get("/earnings", checkAuth(Role.DRIVER), getDriverEarnings);
-router.get("/", checkAuth(Role.ADMIN , Role.SUPER_ADMIN), getAllRides);
-router.post("/:id/rate", checkAuth(Role.RIDER), rateDriver);
+router.patch("/:id/rate", checkAuth(Role.RIDER), rateDriver);
 
 export const RideRoutes = router;

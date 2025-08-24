@@ -48,7 +48,7 @@ export const acceptRide = catchAsync(async (req: Request, res: Response) => {
 export const getSingleRide = catchAsync(async (req: Request, res: Response) => {
 
   const driverId = (req.user as any).userId;
-  
+
   const ride = await RideService.getSingleRide(driverId);
   sendResponse(res, {
     success: true,
@@ -60,7 +60,6 @@ export const getSingleRide = catchAsync(async (req: Request, res: Response) => {
 
 // Driver: Update ride status
 export const updateRideStatus = catchAsync(async (req: Request, res: Response) => {
-
   const { status } = req.body;
   const ride = await RideService.updateRideStatus(req.params.rideId, (req.user as any).userId, status);
 
@@ -74,6 +73,7 @@ export const updateRideStatus = catchAsync(async (req: Request, res: Response) =
 
 // Rider: Cancel ride
 export const cancelRide = catchAsync(async (req: Request, res: Response) => {
+  console.log(req.body, req.params);
   const { reason } = req.body;
   const ride = await RideService.cancelRide(req.params.rideId, (req.user as any).userId, reason);
   sendResponse(res, {
