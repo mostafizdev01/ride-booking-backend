@@ -48,9 +48,22 @@ const UpdateUser = async (req: Request, res: Response, next: NextFunction) => {
     })
 }
 
+/// Update User
+const DeleteUser = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.params.id;
+    const user = await UserServices.DeleteUser(userId)
+
+    res.status(201).json({
+        status: "Success",
+        message: "✅ Update successfull",
+        data: user
+    })
+}
+
 export const UserControllers = {
     createUser,
     allUsers,
     getSingleUser,
-    UpdateUser
+    UpdateUser,
+    DeleteUser
 }

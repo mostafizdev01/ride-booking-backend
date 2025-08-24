@@ -47,6 +47,10 @@ const getSingleUser = async (payload: any) => {
         throw new Error("User not found!")
     }
 
+    if (singleUser?.isDeleted) {
+        throw new Error("🧑‍🦯 Account is Deleted")
+    }
+
     return singleUser
 }
 
@@ -59,9 +63,27 @@ const UpdateUser = async (userId: string, payload: Partial<IUser>) => {
         throw new Error("User not found!")
     }
 
+    if (isUserExist?.isDeleted) {
+        throw new Error("🧑‍🦯 Account is Deleted")
+    }
+
     const newUpdateUser = await User.findByIdAndUpdate(userId, payload, { new: true, runValidators: true })
 
     return newUpdateUser
+}
+
+/// Delete user
+const DeleteUser = async (id: string) => {
+
+    const isUserExist = await User.findById(id)
+
+    if (isUserExist?.isDeleted) {
+        throw new Error("🧑‍🦯 Account is Deleted")
+    }
+
+    const deletedUser = await User.findByIdAndUpdate({ _id: id }, { isDeleted: true }, { new: true, runValidators: true })
+
+    return deletedUser
 }
 
 
@@ -69,5 +91,6 @@ export const UserServices = {
     createUser,
     allUser,
     getSingleUser,
-    UpdateUser
+    UpdateUser,
+    DeleteUser
 }

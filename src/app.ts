@@ -8,7 +8,7 @@ app.use(cookieParser())
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('WellCome to Ride Booking Backend!');
+  res.status(200).json({message: "WellCome to Ride Booking Backend!"})
 });
 
 app.use("/api/v1", router)
