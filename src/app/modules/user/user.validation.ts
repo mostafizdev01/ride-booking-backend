@@ -114,5 +114,13 @@ export const updateUserZodSchema = z.object({
   }).optional(),
   isBlocked: z
     .boolean()
-    .optional()
+    .optional(),
+  vehicleInfo: z.object({
+    model: stringWithCustomTypeError("Vehicle model must be string")
+      .max(100, { message: "Vehicle model cannot exceed 100 characters." }),
+    plateNumber: stringWithCustomTypeError("Vehicle plate number must be string")
+      .max(20, { message: "Vehicle plate number cannot exceed 20 characters." }),
+    color: stringWithCustomTypeError("Vehicle color must be string")
+      .max(50, { message: "Vehicle color cannot exceed 50 characters." }),
+  }).optional()
 });

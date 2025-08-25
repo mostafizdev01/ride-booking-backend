@@ -49,28 +49,24 @@ const updateUser = async (userId: string, payload: Partial<IUser>, decodedToken:
         }
     }
 
-    // Boolean field updates (proper check)
-    if (["isActive", "isBlocked", "isVerified"].some(key => Object.keys(payload).includes(key))) {
-        if ([Role.RIDER, Role.DRIVER].includes(decodedToken.role)) {
-            throw new AppError(httpStatus.FORBIDDEN, "You are not authorized to change these fields");
-        }
-    }
-
-    // Validate Geo location if updating
     if (payload.currentLocation) {
         if (!payload.currentLocation.coordinates || payload.currentLocation.coordinates.length !== 2) {
             throw new AppError(httpStatus.BAD_REQUEST, "Invalid location coordinates");
         }
     }
 
-    // Hash password if updating
     if (payload.password) {
         payload.password = await bcryptjs.hash(payload.password, Number(envVars.BCRYPT_SALT_ROUND));
     }
 
+    console.log("adgfhj", payload);
     const newUpdatedUser = await User.findByIdAndUpdate(
         userId,
-        payload,
+        {
+            $set: {
+                ...payload
+            }
+        },
         { new: true, runValidators: true }
     );
 

@@ -1,5 +1,6 @@
 // ride.interface.ts
 import { Types } from "mongoose";
+import { IUser } from "../user/user.interface";
 
 export enum RideStatus {
   REQUESTED = "requested",
@@ -21,6 +22,7 @@ export enum RideTypes {
   COMFORT = "comfort",
   PREMIUM = "premium",
 }
+
 
 export interface IRide {
   rider: Types.ObjectId;

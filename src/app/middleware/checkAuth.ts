@@ -20,9 +20,9 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
         if (!isUserExist) {
             throw new AppError(httpStatus.BAD_REQUEST, "User does not exist")
         }
-        if (isUserExist.isActive === false) {
-            throw new AppError(httpStatus.BAD_REQUEST, `User is ${isUserExist.isActive}`)
-        }
+        // if (isUserExist.isActive === false) {
+        //     throw new AppError(httpStatus.BAD_REQUEST, `User is ${isUserExist.isActive}`)
+        // }
         if (!authRoles.includes(verifyToken.role)) {
             console.log(authRoles.includes(verifyToken.role));
             throw new AppError(httpStatus.BAD_REQUEST, "You are not promoted in this user")

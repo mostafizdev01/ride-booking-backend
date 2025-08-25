@@ -46,9 +46,9 @@ const forgotPassword = async (email: string) => {
     if (!isUserExist.isApproved) {
         throw new AppError(httpStatus.BAD_REQUEST, "User is not verified")
     }
-    if (isUserExist.isActive) {
-        throw new AppError(httpStatus.BAD_REQUEST, `User is Inctive`)
-    }
+    // if (isUserExist.isActive) {
+    //     throw new AppError(httpStatus.BAD_REQUEST, `User is Inctive`)
+    // }
     if (isUserExist.isBlocked) {
         throw new AppError(httpStatus.BAD_REQUEST, "User is Blooked")
     }

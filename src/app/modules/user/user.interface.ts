@@ -39,4 +39,5 @@ export interface IUser {
     rides?: Types.ObjectId[];
     averageRating?: number;
     totalRatings?: number;
+    address?: string;
 }

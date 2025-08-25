@@ -66,11 +66,27 @@ const getSingleRide = async (driverId: string) => {
   if (!driverId) throw new AppError(StatusCodes.BAD_REQUEST, "Driver ID is required");
 
   const ride = await Ride.findOne({ driver: new Types.ObjectId(driverId) })
-    .populate("rider", "name email")
+    .populate("rider", "name email phone")
     .populate("driver", "name email vehicleInfo")
     .sort({ createdAt: -1 });
   if (!ride) throw new AppError(StatusCodes.NOT_FOUND, "Ride not found");
   if (ride.driver?._id?.toString() !== driverId)
+    throw new AppError(StatusCodes.FORBIDDEN, "You are not assigned to this ride");
+  return ride;
+};
+
+
+// get single ride for rider
+const getSingleRider = async (riderId: string) => {
+
+  if (!riderId) throw new AppError(StatusCodes.BAD_REQUEST, "Rider ID is required");
+
+  const ride = await Ride.findOne({ rider: new Types.ObjectId(riderId) })
+    .populate("rider", "name email phone")
+    .populate("driver", "name email vehicleInfo")
+    .sort({ createdAt: -1 });
+  if (!ride) throw new AppError(StatusCodes.NOT_FOUND, "Ride not found");
+  if (ride.rider?._id?.toString() !== riderId)
     throw new AppError(StatusCodes.FORBIDDEN, "You are not assigned to this ride");
   return ride;
 };
@@ -114,7 +130,12 @@ const cancelRide = async (rideId: string, riderId: string, reason?: string) => {
 };
 
 const getMyRides = async (riderId: string) => {
-  return await Ride.find({ rider: new Types.ObjectId(riderId) }).populate("driver")
+  return await Ride.find({ rider: new Types.ObjectId(riderId) }).populate("driver").populate("rider")
+  .sort({ createdAt: -1 });
+};
+
+const getDriverRides = async (driverId: string) => {
+  return await Ride.find({ driver: new Types.ObjectId(driverId) }).populate("rider")
   .sort({ createdAt: -1 });
 };
 
@@ -181,10 +202,12 @@ export const RideService = {
   getNearbyRides,
   acceptRide,
   getSingleRide,
+  getSingleRider,
   updateRideStatus,
   cancelRide,
   getMyRides,
   getAllRides,
   getDriverEarnings,
-  rateDriver
+  rateDriver,
+  getDriverRides
 };

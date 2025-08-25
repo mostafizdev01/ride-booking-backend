@@ -45,7 +45,8 @@ const userSchema = new Schema<IUser>(
         totalEarnings: { type: Number, default: 0 },
         rides: [{ type: Schema.Types.ObjectId, ref: "Ride" }],
         averageRating: { type: Number, default: 0 },
-        totalRatings: { type: Number, default: 0 }
+        totalRatings: { type: Number, default: 0 },
+        address: { type: String,}
     },
     {
         timestamps: true,

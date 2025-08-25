@@ -21,6 +21,15 @@ passport.use(
                 return done("User does not exist")
             }
 
+            let user = await User.findOne({ email })
+            if (user && !user.isApproved) {
+                return done(null, false, { message: "User is not verified" })
+            }
+
+
+            if (user && user.isBlocked) {
+                return done(null, false, { message: "User is deleted" })
+            }
 
             const isGoogleAuthenticated = isUserExist.auths.some(providerObjects => providerObjects.provider == "google")
 
@@ -62,9 +71,6 @@ passport.use(
                     return done(null, false, { message: "User is not verified" })
                 }
 
-                if (user && (user.isActive === false)) {
-                    return done(`User is isActive`)
-                }
 
                 if (user && user.isBlocked) {
                     return done(null, false, { message: "User is deleted" })

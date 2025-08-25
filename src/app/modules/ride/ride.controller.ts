@@ -58,6 +58,20 @@ export const getSingleRide = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// Get single ride for Rider
+export const getSingleRideForRider = catchAsync(async (req: Request, res: Response) => {
+
+  const riderId = (req.user as any).userId;
+
+  const ride = await RideService.getSingleRider(riderId);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "Ride fetched successfully",
+    data: ride,
+  });
+});
+
 // Driver: Update ride status
 export const updateRideStatus = catchAsync(async (req: Request, res: Response) => {
   const { status } = req.body;
@@ -87,6 +101,16 @@ export const cancelRide = catchAsync(async (req: Request, res: Response) => {
 // Rider: My ride history
 export const getMyRides = catchAsync(async (req: Request, res: Response) => {
   const rides = await RideService.getMyRides((req.user as any).userId);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "Ride history fetched successfully",
+    data: rides,
+  });
+});
+
+export const getDriverRides = catchAsync(async (req: Request, res: Response) => {
+  const rides = await RideService.getDriverRides((req.user as any).userId);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
