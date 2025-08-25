@@ -59,7 +59,6 @@ const updateUser = async (userId: string, payload: Partial<IUser>, decodedToken:
         payload.password = await bcryptjs.hash(payload.password, Number(envVars.BCRYPT_SALT_ROUND));
     }
 
-    console.log("adgfhj", payload);
     const newUpdatedUser = await User.findByIdAndUpdate(
         userId,
         {

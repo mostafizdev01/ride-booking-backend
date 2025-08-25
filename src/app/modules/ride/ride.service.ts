@@ -75,8 +75,6 @@ const getSingleRide = async (driverId: string) => {
   return ride;
 };
 
-
-// get single ride for rider
 const getSingleRider = async (riderId: string) => {
 
   if (!riderId) throw new AppError(StatusCodes.BAD_REQUEST, "Rider ID is required");
@@ -141,11 +139,12 @@ const getDriverRides = async (driverId: string) => {
 
 const getAllRides = async (query: Record<string, string>) => {
   const queryBuilder = new QueryBuilder(
-    Ride.find().populate("rider", "name email").populate("driver", "name email vehicleInfo"),
+    Ride.find().populate("rider").populate("driver"),
     query
   );
 
-  const ridesData = queryBuilder.filter().search(rideSearchableFields).sort().fields().paginate();
+  const ridesData = queryBuilder.filter()
+  .search(rideSearchableFields).sort().fields().paginate();
   const [data, meta] = await Promise.all([ridesData.build(), queryBuilder.getMeta()]);
   return { data, meta };
 };
