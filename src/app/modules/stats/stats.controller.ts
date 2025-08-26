@@ -18,7 +18,6 @@ import { StatsService } from "./stats.service";
 
 const getUserStats = catchAsync(async (req: Request, res: Response) => {
     const id = (req.user as any).userId;
-    console.log(id);
     const stats = await StatsService.getUserStats(id);
     sendResponse(res, {
         statusCode: 200,
@@ -39,7 +38,19 @@ const getEarningStats = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const getAdminAnalytics = async (req: Request, res: Response) => {
+  try {
+    const { range = "7d" } = req.query
+    const analytics = await StatsService.getAnalytics(range as string)
+    res.json(analytics)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: "Error fetching analytics" })
+  }
+}
+
 export const StatsController = {
     getUserStats,
-    getEarningStats
+    getEarningStats,
+    getAdminAnalytics
 };

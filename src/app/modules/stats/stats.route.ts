@@ -23,4 +23,10 @@ router.get(
     StatsController.getEarningStats
 );
 
+router.get(
+  "/analytics",
+  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  StatsController.getAdminAnalytics
+)
+
 export const StatsRoutes = router;
