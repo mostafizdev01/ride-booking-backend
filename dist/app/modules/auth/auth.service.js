@@ -49,9 +49,9 @@ const forgotPassword = (email) => __awaiter(void 0, void 0, void 0, function* ()
     if (!isUserExist.isApproved) {
         throw new AppHelpers_1.default(http_status_codes_1.default.BAD_REQUEST, "User is not verified");
     }
-    if (isUserExist.isActive) {
-        throw new AppHelpers_1.default(http_status_codes_1.default.BAD_REQUEST, `User is Inctive`);
-    }
+    // if (isUserExist.isActive) {
+    //     throw new AppError(httpStatus.BAD_REQUEST, `User is Inctive`)
+    // }
     if (isUserExist.isBlocked) {
         throw new AppHelpers_1.default(http_status_codes_1.default.BAD_REQUEST, "User is Blooked");
     }

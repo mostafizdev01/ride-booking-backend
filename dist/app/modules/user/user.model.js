@@ -35,7 +35,8 @@ const userSchema = new mongoose_1.Schema({
     totalEarnings: { type: Number, default: 0 },
     rides: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Ride" }],
     averageRating: { type: Number, default: 0 },
-    totalRatings: { type: Number, default: 0 }
+    totalRatings: { type: Number, default: 0 },
+    address: { type: String, }
 }, {
     timestamps: true,
     versionKey: false,

@@ -90,23 +90,17 @@ const updateUser = (userId, payload, decodedToken) => __awaiter(void 0, void 0, 
             throw new AppHelpers_1.default(http_status_codes_1.default.FORBIDDEN, "You are not authorized to assign SUPER_ADMIN");
         }
     }
-    // Boolean field updates (proper check)
-    if (["isActive", "isBlocked", "isVerified"].some(key => Object.keys(payload).includes(key))) {
-        if ([user_interface_1.Role.RIDER, user_interface_1.Role.DRIVER].includes(decodedToken.role)) {
-            throw new AppHelpers_1.default(http_status_codes_1.default.FORBIDDEN, "You are not authorized to change these fields");
-        }
-    }
-    // Validate Geo location if updating
     if (payload.currentLocation) {
         if (!payload.currentLocation.coordinates || payload.currentLocation.coordinates.length !== 2) {
             throw new AppHelpers_1.default(http_status_codes_1.default.BAD_REQUEST, "Invalid location coordinates");
         }
     }
-    // Hash password if updating
     if (payload.password) {
         payload.password = yield bcryptjs_1.default.hash(payload.password, Number(env_1.envVars.BCRYPT_SALT_ROUND));
     }
-    const newUpdatedUser = yield user_model_1.User.findByIdAndUpdate(userId, payload, { new: true, runValidators: true });
+    const newUpdatedUser = yield user_model_1.User.findByIdAndUpdate(userId, {
+        $set: Object.assign({}, payload)
+    }, { new: true, runValidators: true });
     if (!newUpdatedUser) {
         throw new AppHelpers_1.default(http_status_codes_1.default.INTERNAL_SERVER_ERROR, "Failed to update user");
     }

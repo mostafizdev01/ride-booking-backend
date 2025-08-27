@@ -7,7 +7,7 @@ const ride_interface_1 = require("./ride.interface");
 const locationSchema = new mongoose_1.Schema({
     address: { type: String, required: true },
     type: { type: String, enum: ["Point"], default: "Point" },
-    coordinates: { type: [Number], required: true }, // [lng, lat]
+    coordinates: { type: [Number], required: true },
 }, { _id: false, versionKey: false });
 const rideSchema = new mongoose_1.Schema({
     rider: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true, index: true },
@@ -16,6 +16,11 @@ const rideSchema = new mongoose_1.Schema({
     destinationLocation: { type: locationSchema, required: true },
     fare: { type: Number, required: true },
     status: { type: String, enum: Object.values(ride_interface_1.RideStatus), default: ride_interface_1.RideStatus.REQUESTED, index: true },
+    rideTypes: {
+        type: String,
+        enum: Object.values(ride_interface_1.RideTypes),
+    },
+    paymentMethod: { type: String, enum: ["card", "cash"], required: true },
     cancellationReason: { type: String },
     timestamps: {
         requestedAt: { type: Date, default: Date.now },

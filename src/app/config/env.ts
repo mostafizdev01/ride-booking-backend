@@ -48,6 +48,12 @@ interface EnvVars {
     REDIS_PORT: string;
     REDIS_USERNAME: string;
     REDIS_PASSWORD: string;
+
+    TWILIO: {
+        PHONE_NUMBER: string;
+        ACCOUNT_SID: string;
+        AUTH_TOKEN: string;
+    }
 }
 
 const loadEnvVars = () => {
@@ -85,7 +91,10 @@ const loadEnvVars = () => {
         "REDIS_PORT",
         "REDIS_USERNAME",
         "REDIS_PASSWORD",
-        "SSL_IPN_URL"
+        "SSL_IPN_URL",
+        "TWILIO_PHONE_NUMBER",
+        "TWILIO_ACCOUNT_SID",
+        "TWILIO_AUTH_TOKEN"
     ];
 
     requiredEnvVars.forEach((envVar) => {
@@ -142,6 +151,12 @@ const loadEnvVars = () => {
         REDIS_PORT: process.env.REDIS_PORT as string,
         REDIS_USERNAME: process.env.REDIS_USERNAME as string,
         REDIS_PASSWORD: process.env.REDIS_PASSWORD as string,
+
+        TWILIO: {
+            PHONE_NUMBER: process.env.TWILIO_PHONE_NUMBER as string,
+            ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID as string,
+            AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN as string
+        }
     }
 }
 

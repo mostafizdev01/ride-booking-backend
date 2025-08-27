@@ -16,6 +16,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const app_1 = __importDefault(require("./app"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const seedSuparAdmin_1 = __importDefault(require("./app/utilis/seedSuparAdmin"));
+const redis_config_1 = require("./app/config/redis,config");
 dotenv_1.default.config();
 const port = process.env.PORT || 3000;
 let server;
@@ -35,6 +36,7 @@ function main() {
     });
 }
 (() => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, redis_config_1.connectRedis)();
     yield main();
     yield (0, seedSuparAdmin_1.default)();
 }))();

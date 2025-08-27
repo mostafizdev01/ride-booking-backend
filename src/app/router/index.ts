@@ -3,6 +3,7 @@ import { UserRoutes } from "../modules/user/user.route";
 import { AuthRoutes } from "../modules/auth/auth.route";
 import { RideRoutes } from "../modules/ride/ride.route";
 import { StatsRoutes } from "../modules/stats/stats.route";
+import { SOSRoutes } from "../modules/SOS/sos.route";
 
 const router = Router();
 
@@ -22,6 +23,10 @@ const moduleRoutes = [
     {
         path : "/stats",
         route: StatsRoutes
+    },
+    {
+        path: "/sos",
+        route: SOSRoutes
     }
 ];
 moduleRoutes.forEach((route) => {

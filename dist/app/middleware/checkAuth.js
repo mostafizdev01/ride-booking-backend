@@ -20,7 +20,7 @@ const user_model_1 = require("../modules/user/user.model");
 const jwt_1 = require("../utilis/jwt");
 const checkAuth = (...authRoles) => (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const accessToken = req.headers.authorization;
+        const accessToken = req.headers.authorization || req.cookies.accessToken;
         if (!accessToken) {
             throw new AppHelpers_1.default(http_status_codes_1.default.BAD_REQUEST, "No Token Recieved");
         }
@@ -29,9 +29,9 @@ const checkAuth = (...authRoles) => (req, res, next) => __awaiter(void 0, void 0
         if (!isUserExist) {
             throw new AppHelpers_1.default(http_status_codes_1.default.BAD_REQUEST, "User does not exist");
         }
-        if (isUserExist.isActive === false) {
-            throw new AppHelpers_1.default(http_status_codes_1.default.BAD_REQUEST, `User is ${isUserExist.isActive}`);
-        }
+        // if (isUserExist.isActive === false) {
+        //     throw new AppError(httpStatus.BAD_REQUEST, `User is ${isUserExist.isActive}`)
+        // }
         if (!authRoles.includes(verifyToken.role)) {
             console.log(authRoles.includes(verifyToken.role));
             throw new AppHelpers_1.default(http_status_codes_1.default.BAD_REQUEST, "You are not promoted in this user");

@@ -37,6 +37,14 @@ const loadEnvVars = () => {
         "SMTP_HOST",
         "SMTP_USER",
         "SMTP_FROM",
+        "REDIS_HOST",
+        "REDIS_PORT",
+        "REDIS_USERNAME",
+        "REDIS_PASSWORD",
+        "SSL_IPN_URL",
+        "TWILIO_PHONE_NUMBER",
+        "TWILIO_ACCOUNT_SID",
+        "TWILIO_AUTH_TOKEN"
     ];
     requiredEnvVars.forEach((envVar) => {
         if (!process.env[envVar]) {
@@ -70,6 +78,7 @@ const loadEnvVars = () => {
             SSL_SUCCESS_BACKEND_URL: process.env.SSL_SUCCESS_BACKEND_URL,
             SSL_FAIL_BACKEND_URL: process.env.SSL_FAIL_BACKEND_URL,
             SSL_CANCEL_BACKEND_URL: process.env.SSL_CANCEL_BACKEND_URL,
+            SSL_IPN_URL: process.env.SSL_IPN_URL
         },
         CLOUDINARY: {
             CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
@@ -83,6 +92,15 @@ const loadEnvVars = () => {
             SMTP_HOST: process.env.SMTP_HOST,
             SMTP_FROM: process.env.SMTP_FROM,
         },
+        REDIS_HOST: process.env.REDIS_HOST,
+        REDIS_PORT: process.env.REDIS_PORT,
+        REDIS_USERNAME: process.env.REDIS_USERNAME,
+        REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+        TWILIO: {
+            PHONE_NUMBER: process.env.TWILIO_PHONE_NUMBER,
+            ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
+            AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN
+        }
     };
 };
 exports.envVars = loadEnvVars();

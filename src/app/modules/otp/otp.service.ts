@@ -1,8 +1,8 @@
 import crypto from "crypto";
-import { redisClient } from "../../config/redis.config";
 import { User } from "../user/user.model";
 import AppError from "../../errorHelpers/AppHelpers";
 import { sendEmail } from "../../utilis/sendEmail";
+import { redisClient } from "../../config/redis,config";
 const OTP_EXPIRATION = 2 * 60 
 
 const generateOtp = (length = 6) => {
@@ -20,7 +20,7 @@ const sendOTP = async (email: string, name: string) => {
         throw new AppError(404, "User not found")
     }
 
-    if (user.isVerified) {
+    if (user.isApproved) {
         throw new AppError(401, "You are already verified")
     }
     const otp = generateOtp();
@@ -53,7 +53,7 @@ const verifyOTP = async (email: string, otp: string) => {
         throw new AppError(404, "User not found")
     }
 
-    if (user.isVerified) {
+    if (user.isApproved) {
         throw new AppError(401, "You are already verified")
     }
 

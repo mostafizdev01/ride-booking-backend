@@ -21,8 +21,8 @@ app.use(expressSession({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: false,
-    sameSite: 'lax',
+    secure: envVars.NODE_ENV === "production",
+    sameSite: envVars.NODE_ENV === "production" ? "none" : "lax"
   }
 }))
 app.use(passport.initialize())

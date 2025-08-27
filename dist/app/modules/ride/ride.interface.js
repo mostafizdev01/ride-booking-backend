@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RideStatus = void 0;
+exports.RideTypes = exports.RideStatus = void 0;
 var RideStatus;
 (function (RideStatus) {
     RideStatus["REQUESTED"] = "requested";
@@ -10,3 +10,9 @@ var RideStatus;
     RideStatus["COMPLETED"] = "completed";
     RideStatus["CANCELED"] = "canceled";
 })(RideStatus || (exports.RideStatus = RideStatus = {}));
+var RideTypes;
+(function (RideTypes) {
+    RideTypes["ECONOMY"] = "economy";
+    RideTypes["COMFORT"] = "comfort";
+    RideTypes["PREMIUM"] = "premium";
+})(RideTypes || (exports.RideTypes = RideTypes = {}));

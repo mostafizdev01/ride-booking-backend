@@ -23,13 +23,14 @@ const http_status_codes_1 = require("http-status-codes");
 const QueryBuilder_1 = require("../../utilis/QueryBuilder");
 const ride_constant_1 = require("./ride.constant");
 const requestRide = (payload, riderId) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const activeRide = yield ride_model_1.Ride.findOne({
         rider: new mongoose_1.Types.ObjectId(riderId),
         status: { $in: [ride_interface_1.RideStatus.REQUESTED, ride_interface_1.RideStatus.ACCEPTED, ride_interface_1.RideStatus.PICKED_UP, ride_interface_1.RideStatus.IN_TRANSIT] },
     });
     if (activeRide)
         throw new AppHelpers_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, "You already have an active ride");
-    return yield ride_model_1.Ride.create(Object.assign(Object.assign({}, payload), { rider: new mongoose_1.Types.ObjectId(riderId), status: ride_interface_1.RideStatus.REQUESTED, timestamps: { requestedAt: new Date() } }));
+    return yield ride_model_1.Ride.create(Object.assign(Object.assign({}, payload), { rider: new mongoose_1.Types.ObjectId(riderId), status: ride_interface_1.RideStatus.REQUESTED, timestamps: { requestedAt: ((_a = payload.timestamps) === null || _a === void 0 ? void 0 : _a.requestedAt) || new Date() } }));
 });
 const getNearbyRides = (coordinates) => __awaiter(void 0, void 0, void 0, function* () {
     return yield ride_model_1.Ride.find({
@@ -65,6 +66,34 @@ const acceptRide = (rideId, driverId) => __awaiter(void 0, void 0, void 0, funct
     });
     return ride;
 });
+const getSingleRide = (driverId) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    if (!driverId)
+        throw new AppHelpers_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, "Driver ID is required");
+    const ride = yield ride_model_1.Ride.findOne({ driver: new mongoose_1.Types.ObjectId(driverId) })
+        .populate("rider", "name email phone")
+        .populate("driver", "name email vehicleInfo")
+        .sort({ createdAt: -1 });
+    if (!ride)
+        throw new AppHelpers_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, "Ride not found");
+    if (((_b = (_a = ride.driver) === null || _a === void 0 ? void 0 : _a._id) === null || _b === void 0 ? void 0 : _b.toString()) !== driverId)
+        throw new AppHelpers_1.default(http_status_codes_1.StatusCodes.FORBIDDEN, "You are not assigned to this ride");
+    return ride;
+});
+const getSingleRider = (riderId) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    if (!riderId)
+        throw new AppHelpers_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, "Rider ID is required");
+    const ride = yield ride_model_1.Ride.findOne({ rider: new mongoose_1.Types.ObjectId(riderId) })
+        .populate("rider", "name email phone")
+        .populate("driver", "name email vehicleInfo")
+        .sort({ createdAt: -1 });
+    if (!ride)
+        throw new AppHelpers_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, "Ride not found");
+    if (((_b = (_a = ride.rider) === null || _a === void 0 ? void 0 : _a._id) === null || _b === void 0 ? void 0 : _b.toString()) !== riderId)
+        throw new AppHelpers_1.default(http_status_codes_1.StatusCodes.FORBIDDEN, "You are not assigned to this ride");
+    return ride;
+});
 const updateRideStatus = (rideId, driverId, status) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const ride = yield ride_model_1.Ride.findById(rideId);
@@ -85,6 +114,7 @@ const updateRideStatus = (rideId, driverId, status) => __awaiter(void 0, void 0,
 });
 const cancelRide = (rideId, riderId, reason) => __awaiter(void 0, void 0, void 0, function* () {
     const ride = yield ride_model_1.Ride.findById(rideId);
+    console.log(ride);
     if (!ride)
         throw new AppHelpers_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, "Ride not found");
     if (ride.rider.toString() !== riderId)
@@ -98,11 +128,17 @@ const cancelRide = (rideId, riderId, reason) => __awaiter(void 0, void 0, void 0
     return ride;
 });
 const getMyRides = (riderId) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield ride_model_1.Ride.find({ rider: new mongoose_1.Types.ObjectId(riderId) }).sort({ createdAt: -1 });
+    return yield ride_model_1.Ride.find({ rider: new mongoose_1.Types.ObjectId(riderId) }).populate("driver").populate("rider")
+        .sort({ createdAt: -1 });
+});
+const getDriverRides = (driverId) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield ride_model_1.Ride.find({ driver: new mongoose_1.Types.ObjectId(driverId) }).populate("rider")
+        .sort({ createdAt: -1 });
 });
 const getAllRides = (query) => __awaiter(void 0, void 0, void 0, function* () {
-    const queryBuilder = new QueryBuilder_1.QueryBuilder(ride_model_1.Ride.find().populate("rider", "name email").populate("driver", "name email vehicleInfo"), query);
-    const ridesData = queryBuilder.filter().search(ride_constant_1.rideSearchableFields).sort().fields().paginate();
+    const queryBuilder = new QueryBuilder_1.QueryBuilder(ride_model_1.Ride.find().populate("rider").populate("driver"), query);
+    const ridesData = queryBuilder.filter()
+        .search(ride_constant_1.rideSearchableFields).sort().fields().paginate();
     const [data, meta] = yield Promise.all([ridesData.build(), queryBuilder.getMeta()]);
     return { data, meta };
 });
@@ -142,10 +178,13 @@ exports.RideService = {
     requestRide,
     getNearbyRides,
     acceptRide,
+    getSingleRide,
+    getSingleRider,
     updateRideStatus,
     cancelRide,
     getMyRides,
     getAllRides,
     getDriverEarnings,
-    rateDriver
+    rateDriver,
+    getDriverRides
 };

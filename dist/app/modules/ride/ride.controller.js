@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rateDriver = exports.getDriverEarnings = exports.getAllRides = exports.getMyRides = exports.cancelRide = exports.updateRideStatus = exports.acceptRide = exports.getNearbyRides = exports.requestRide = void 0;
+exports.rateDriver = exports.getDriverEarnings = exports.getAllRides = exports.getDriverRides = exports.getMyRides = exports.cancelRide = exports.updateRideStatus = exports.getSingleRideForRider = exports.getSingleRide = exports.acceptRide = exports.getNearbyRides = exports.requestRide = void 0;
 const ride_service_1 = require("./ride.service");
 const http_status_codes_1 = require("http-status-codes");
 const catchAsync_1 = require("../../utilis/catchAsync");
@@ -47,6 +47,28 @@ exports.acceptRide = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0
         data: ride,
     });
 }));
+// Get single ride for Driver
+exports.getSingleRide = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const driverId = req.user.userId;
+    const ride = yield ride_service_1.RideService.getSingleRide(driverId);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        message: "Ride fetched successfully",
+        data: ride,
+    });
+}));
+// Get single ride for Rider
+exports.getSingleRideForRider = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const riderId = req.user.userId;
+    const ride = yield ride_service_1.RideService.getSingleRider(riderId);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        message: "Ride fetched successfully",
+        data: ride,
+    });
+}));
 // Driver: Update ride status
 exports.updateRideStatus = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { status } = req.body;
@@ -60,6 +82,7 @@ exports.updateRideStatus = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(
 }));
 // Rider: Cancel ride
 exports.cancelRide = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.body, req.params);
     const { reason } = req.body;
     const ride = yield ride_service_1.RideService.cancelRide(req.params.rideId, req.user.userId, reason);
     (0, sendResponse_1.sendResponse)(res, {
@@ -72,6 +95,15 @@ exports.cancelRide = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0
 // Rider: My ride history
 exports.getMyRides = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const rides = yield ride_service_1.RideService.getMyRides(req.user.userId);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        message: "Ride history fetched successfully",
+        data: rides,
+    });
+}));
+exports.getDriverRides = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const rides = yield ride_service_1.RideService.getDriverRides(req.user.userId);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: http_status_codes_1.StatusCodes.OK,

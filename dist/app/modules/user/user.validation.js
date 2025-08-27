@@ -61,7 +61,7 @@ exports.createUserZodSchema = zod_1.default.object({
         coordinates: zod_1.default
             .array(zod_1.default.number())
             .length(2, { message: "Coordinates must be an array of [lng, lat]" }),
-    }),
+    }).optional(),
     isBlocked: zod_1.default
         .boolean()
         .optional()
@@ -111,8 +111,16 @@ exports.updateUserZodSchema = zod_1.default.object({
         coordinates: zod_1.default
             .array(zod_1.default.number())
             .length(2, { message: "Coordinates must be an array of [lng, lat]" }),
-    }),
+    }).optional(),
     isBlocked: zod_1.default
         .boolean()
-        .optional()
+        .optional(),
+    vehicleInfo: zod_1.default.object({
+        model: stringWithCustomTypeError("Vehicle model must be string")
+            .max(100, { message: "Vehicle model cannot exceed 100 characters." }),
+        plateNumber: stringWithCustomTypeError("Vehicle plate number must be string")
+            .max(20, { message: "Vehicle plate number cannot exceed 20 characters." }),
+        color: stringWithCustomTypeError("Vehicle color must be string")
+            .max(50, { message: "Vehicle color cannot exceed 50 characters." }),
+    }).optional()
 });

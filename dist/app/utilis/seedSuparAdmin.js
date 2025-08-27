@@ -20,6 +20,7 @@ const seedSuparAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const isSuparAdmin = yield user_model_1.User.findOne({ email: env_1.envVars.SUPAR_ADMIN_EMAIL });
         if (isSuparAdmin) {
+            console.log("already supar admin added");
             return;
         }
         const hasedPassword = yield bcryptjs_1.default.hash(env_1.envVars.SUPAR_ADMIN_PASSWORD, Number(env_1.envVars.BCRYPT_SALT_ROUND));
@@ -40,6 +41,7 @@ const seedSuparAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
             }
         };
         yield user_model_1.User.create(payload);
+        console.log("user from suparadmin");
     }
     catch (error) {
         console.log(error);
