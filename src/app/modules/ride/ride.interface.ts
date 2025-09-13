@@ -12,7 +12,7 @@ export enum IRiderStatus {
 
 export interface IRider {
     user: Types.ObjectId,
-    driver: Types.ObjectId,
+    driver?: Types.ObjectId,
     pickup: { lat: Number, lng: Number },
     destination: { lat: Number, lng: Number },
     status: IRiderStatus, // requested, accepted, picked_up, in_transit, completed, canceled

@@ -6,15 +6,25 @@ interface EnvConfig {
     PORT: string,
     DB_URL: string,
     NODE_ENV: "development" | "production",
-    BCRYPT_SALT_ROUND: number
+    BCRYPT_SALT_ROUND: string,
+    GOOGLE_CLIENT_SECRET: string
+    GOOGLE_CLIENT_ID: string
+    GOOGLE_CALLBACK_URL: string
+    EXPRESS_SESSION_SECRET: string
+    FRONTEND_URL: string
 }
 
-const loadEnvVariables = () => {
+const loadEnvVariables = ():EnvConfig => {
     const requiredEnvVariables: string[] = [
         "PORT",
         "DB_URL",
         "NODE_ENV",
-        "BCRYPT_SALT_ROUND"
+        "BCRYPT_SALT_ROUND",
+        "GOOGLE_CLIENT_SECRET",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CALLBACK_URL",
+        "EXPRESS_SESSION_SECRET",
+        "FRONTEND_URL",
     ];
 
     requiredEnvVariables.forEach(key => {
@@ -24,9 +34,16 @@ const loadEnvVariables = () => {
     })
 
     return {
-        PORT: process.env.PORT,
+        PORT: process.env.PORT as string,
         DB_URL: process.env.DB_URL as string,
-        BCRYPT_SALT_ROUND: process.env.BCRYPT_SALT_ROUND
+        NODE_ENV: process.env.NODE_ENV as "development" | "production",
+        BCRYPT_SALT_ROUND: process.env.BCRYPT_SALT_ROUND as string,
+        GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET as string,
+        GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID as string,
+        GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL as string,
+        EXPRESS_SESSION_SECRET: process.env.EXPRESS_SESSION_SECRET as string,
+        FRONTEND_URL: process.env.FRONTEND_URL as string,
+
     }
 }
 

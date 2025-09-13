@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { UserRoutes } from "../modules/user/user.route"
 import { DriverRoutes } from "../modules/driver/driver.route"
+import { RiderRoutes } from "../modules/ride/ride.route"
 
 
 export const router = Router()
@@ -16,7 +17,7 @@ const moduleRoutes = [
     },
     {
         path: "/rider",
-        route: UserRoutes
+        route: RiderRoutes
     },
     {
         path: "/driver",

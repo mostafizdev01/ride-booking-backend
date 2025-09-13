@@ -3,10 +3,13 @@ import { IRider, IRiderStatus } from "./ride.interface";
 
 
 const rideSchema = new Schema<IRider>({
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: "user",
+    },
     driver: {
         type: Schema.Types.ObjectId,
         ref: "driver",
-        required: true
     },
     pickup: {
         lat: { type: Number, required: true },
