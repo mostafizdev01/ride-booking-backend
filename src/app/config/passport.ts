@@ -9,6 +9,7 @@ passport.use(
             clientID: envVars.GOOGLE_CLIENT_ID,
             clientSecret: envVars.GOOGLE_CLIENT_SECRET,
             callbackURL: envVars.GOOGLE_CALLBACK_URL
-        },() => {}
+        },() => {},
+        AIURL = "HTTPS//:YOUTUBE.COM"
     )
 )
