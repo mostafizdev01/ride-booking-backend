@@ -1,42 +1,178 @@
-import { NextFunction, Request, Response } from "express";
-import { RiderServices } from "./ride.service";
+import { Request, Response } from 'express';
+import httpStatus from 'http-status-codes';
+import { RideService } from './ride.service';
+import mongoose, { Types } from 'mongoose';
 
-/// create ride
-const CreateRide = async (req: Request, res: Response, next: NextFunction) => {
-    const ride = await RiderServices.CreateRide(req.body);
-    res.status(201).json({ success: true, message: "✅ Ride send successfull", data: ride })
-}
+const requestRide = async (req: Request, res: Response) => {
+  
+  try {
+    const riderIdStr = req.user?.userId;
 
-/// get all ride
-const AllRides = async (req: Request, res: Response, next: NextFunction) => {
-    const ride = await RiderServices.AllRides();
-    res.status(200).json({ success: true, message: "✅ All Ride Readride success", data: ride })
-}
+    if (!riderIdStr) {
+      return res.status(httpStatus.UNAUTHORIZED).json({
+        success: false,
+        message: 'Unauthorized: Rider ID missing',
+      });
+    }
 
-// patch update ride
-const UpdateRide = async (req: Request, res: Response, next: NextFunction) => {
+    const riderId = new mongoose.Types.ObjectId(riderIdStr);
+    const { pickupLocation, destinationLocation } = req.body;
+
+    const ride = await RideService.requestRide(riderId, pickupLocation, destinationLocation);
+
+    res.status(httpStatus.CREATED).json({
+      success: true,
+      message: 'Ride requested successfully',
+      data: ride,
+    });
+  } catch (error: any) {
+    res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: error.message || 'Failed to request ride',
+    });
+  }
+};
+
+const cancelRide = async (req: Request, res: Response) => {
+  try {
+    const riderIdStr = req.user?.userId;
+    if (!riderIdStr) {
+      return res.status(httpStatus.UNAUTHORIZED).json({
+        success: false,
+        message: 'Unauthorized: Rider ID missing',
+      });
+    }
+
+    const riderId = new mongoose.Types.ObjectId(riderIdStr);
     const rideId = req.params.id;
-    const ride = await RiderServices.UpdateRide(rideId, req.body);
-    res.status(201).json({ success: true, message: "✅ Ride accept", data: ride })
-}
+    
+    const result = await RideService.cancelRide(rideId, riderId);
 
-// /// All Driver geting
-// const GetAllDriver = async (req: Request, res: Response, next: NextFunction) => {
-//     const driver = await DriverServices.GetAllDriver();
-//     res.status(200).json({ success: true, message: "✅ Driver Geting successfull", data: driver })
-// }
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Ride cancelled successfully',
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: error.message || 'Failed to cancel ride',
+    });
+  }
+};
 
-// /// Single Driver geting
-// const GetSingleDriver = async (req: Request, res: Response, next: NextFunction) => {
-//     const id = req.params.id
-//     const driver = await DriverServices.GetSigleDriver(id);
-//     res.status(200).json({ success: true, message: "✅ Driver Geting successfull", data: driver })
-// }
+const getMyRides = async (req: Request, res: Response) => {
+  try {
+    const userIdStr = req.user?.userId;
+    const role = req.user?.role;
 
-export const RideControllers = {
-    CreateRide,
-    UpdateRide,
-    AllRides
-    // GetAllDriver,
-    // GetSingleDriver
-}
+    if (!userIdStr) {
+      return res.status(httpStatus.UNAUTHORIZED).json({
+        success: false,
+        message: 'Unauthorized: User ID missing',
+      });
+    }
+
+    const userId = new mongoose.Types.ObjectId(userIdStr);
+
+    const rides = await RideService.getUserRides(userId, role as string);
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Ride history fetched successfully',
+      data: rides,
+    });
+  } catch (error: any) {
+    res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: error.message || 'Failed to fetch rides',
+    });
+  }
+};
+
+const acceptRide = async (req: Request, res: Response) => {
+  try {
+    const driverIdStr = req.user?.userId;
+    if (!driverIdStr) {
+      return res.status(httpStatus.UNAUTHORIZED).json({
+        success: false,
+        message: 'Unauthorized: Driver ID missing',
+      });
+    }
+
+    const driverId = new mongoose.Types.ObjectId(driverIdStr);
+    const rideId = req.params.id;
+
+    const ride = await RideService.acceptRide(rideId, driverId);
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Ride accepted successfully',
+      data: ride,
+    });
+  } catch (error: any) {
+    res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: error.message || 'Failed to accept ride',
+    });
+  }
+};
+
+
+const updateRideStatus = async (req: Request, res: Response) => {
+  try {
+    const driverIdStr = req.user?.userId;
+
+    // 🛑 Validate if driverId exists
+    if (!driverIdStr) {
+      return res.status(httpStatus.UNAUTHORIZED).json({
+        success: false,
+        message: 'Unauthorized access - driver ID missing',
+      });
+    }
+
+    const driverId = new Types.ObjectId(driverIdStr); // ✅ cast to ObjectId
+    const rideId = req.params.id;
+    const { status } = req.body;
+
+    const updatedRide = await RideService.updateRideStatus(rideId, driverId, status);
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Ride status updated successfully',
+      data: updatedRide,
+    });
+  } catch (error: any) {
+    res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: error.message || 'Failed to update ride status',
+    });
+  }
+};
+
+
+const getAllRidesAdmin = async (_req: Request, res: Response) => {
+  try {
+    const rides = await RideService.getAllRides();
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'All rides fetched successfully',
+      data: rides,
+    });
+  } catch (error: any) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: error.message || 'Failed to fetch rides',
+    });
+  }
+};
+
+export const RideController = {
+  requestRide,
+  cancelRide,
+  getMyRides,
+  acceptRide,
+  updateRideStatus,
+  getAllRidesAdmin,
+};

@@ -1,69 +1,245 @@
-import { NextFunction, Request, Response } from "express";
-import { UserServices } from "./user.service";
+import { NextFunction, Request, Response } from 'express';
+import { UserService, UserServices } from './user.service';
+import { User } from './user.model';
+import bcrypt from 'bcryptjs';
+import httpStatus from 'http-status-codes';
+import { envVars } from '../../config/env';
+import { sendResponse } from '../../utils/apiResponse';
+import { JwtPayload } from 'jsonwebtoken';
+import { catchAsync } from '../../utils/catchAsync';
+import AppError from '../../errorHelpers/AppError';
 
 
-const createUser = async (req: Request, res: Response, next: NextFunction) => {
-    const user = await UserServices.createUser(req.body)
-    res.status(201).json({
-        status: "Success",
-        message: "✅ Registration successfull",
-        data: user
-    })
-}
+const createUser = async (req: Request, res: Response) => {
+  try {
+    const { name, email, password, role } = req.body;
 
-/// get allUsers
-const allUsers = async (req: Request, res: Response, next: NextFunction) => {
-    const user = await UserServices.allUser()
-    res.status(201).json({
-        status: "Success",
-        message: "✅ All User Geting successfull",
-        data: user
-    })
-}
 
-/// get single User
-const getSingleUser = async (req: Request, res: Response, next: NextFunction) => {
+    if (!name || !email || !password || !role) {
+      return res.status(httpStatus.BAD_REQUEST).json({
+        success: false,
+        message: `${name}, ${email}, ${password}, and ${role} are required.`,
+      });
+    }
 
-    const user = await UserServices.getSingleUser(req.body)
+    // ✅ Email uniqueness check
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(httpStatus.CONFLICT).json({
+        success: false,
+        message: 'User already exists.',
+      });
+    }
 
-    res.status(201).json({
-        status: "Success",
-        message: "✅ Single User geting successfull",
-        data: user
-    })
-}
+    const hashedPassword = await bcrypt.hash(password as string, Number(envVars.BCRYPT_SALT_ROUND))
 
-/// Update User
-const UpdateUser = async (req: Request, res: Response, next: NextFunction) => {
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+    });
 
-    const userId = req.params.id;
-    const payload = req.body;
+    // ✅ Exclude password from response
+    const { password: _, ...userWithoutPassword } = newUser.toObject();
 
-    const user = await UserServices.UpdateUser(userId, payload)
+    res.status(httpStatus.CREATED).json({
+      success: true,
+      message: 'User created successfully',
+      data: userWithoutPassword,
+    });
+  } catch (err: any) {
+    console.error('User creation error:', err);
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: `Something went wrong: ${err.message}`,
+    });
+  }
+};
 
-    res.status(201).json({
-        status: "Success",
-        message: "✅ Update successfull",
-        data: user
-    })
-}
 
-/// Update User
-const DeleteUser = async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.params.id;
-    const user = await UserServices.DeleteUser(userId)
+// ✅ Get all users (admin only)
+const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await UserService.getAllUsers();
+    res.status(httpStatus.OK).json({ success: true, data: users });
+  } catch (err: any) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'Failed to fetch users',
+    });
+  }
+};
 
-    res.status(201).json({
-        status: "Success",
-        message: "✅ Update successfull",
-        data: user
-    })
-}
+const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const decodedToken = req.user as JwtPayload
+
+  const result = await UserServices.getMe(decodedToken.userId);
+
+  // console.log('000000',result);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: "Your profile Retrieved Successfully",
+    data: result.data
+  })
+})
+
+// ✅ Get user by ID (admin only)
+const getUserById = async (req: Request, res: Response) => {
+  try {
+    const user = await UserService.getUserById(req.params.id);
+    if (!user) {
+      return res.status(httpStatus.NOT_FOUND).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+    res.status(httpStatus.OK).json({ success: true, data: user });
+  } catch (err: any) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'Failed to retrieve user',
+    });
+  }
+};
+
+// ✅ Block user (admin)
+const blockUser = async (req: Request, res: Response) => {
+  try {
+    const user = await UserService.blockUser(req.params.id);
+    if (!user) {
+      return res.status(httpStatus.NOT_FOUND).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'User blocked successfully',
+      data: user,
+    });
+  } catch (err: any) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'Failed to block user',
+    });
+  }
+};
+
+// ✅ Unblock user (admin)
+const unblockUser = async (req: Request, res: Response) => {
+  try {
+    const user = await UserService.unblockUser(req.params.id);
+    if (!user) {
+      return res.status(httpStatus.NOT_FOUND).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'User unblocked successfully',
+      data: user,
+    });
+  } catch (err: any) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'Failed to unblock user',
+    });
+  }
+};
+
+// ✅ Approve driver (admin)
+const approveDriver = async (req: Request, res: Response) => {
+  try {
+    const driver = await UserService.approveDriver(req.params.id);
+    if (!driver) {
+      return res.status(httpStatus.NOT_FOUND).json({
+        success: false,
+        message: 'Driver not found or not a driver',
+      });
+    }
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Driver approved successfully',
+      data: driver,
+    });
+  } catch (err: any) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'Failed to approve driver',
+    });
+  }
+};
+
+// ✅ Suspend driver (admin)
+const suspendDriver = async (req: Request, res: Response) => {
+  try {
+    const driver = await UserService.suspendDriver(req.params.id);
+    if (!driver) {
+      return res.status(httpStatus.NOT_FOUND).json({
+        success: false,
+        message: 'Driver not found or not a driver',
+      });
+    }
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Driver suspended successfully',
+      data: driver,
+    });
+  } catch (err: any) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'Failed to suspend driver',
+    });
+  }
+};
+
+const updateDriverAvailability = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?._id;
+
+    if (!userId) {
+      return res.status(httpStatus.UNAUTHORIZED).json({
+        success: false,
+        message: 'Unauthorized. User ID missing.',
+      });
+    }
+
+    const { isOnline } = req.body;
+
+    const updated = await UserService.updateDriverAvailability(userId, isOnline);
+    if (!updated) {
+      return res.status(httpStatus.BAD_REQUEST).json({
+        success: false,
+        message: 'Driver not found or not approved',
+      });
+    }
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: `Driver is now ${isOnline ? 'Online' : 'Offline'}`,
+      data: updated,
+    });
+  } catch (err: any) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'Failed to update driver availability',
+    });
+  }
+};
+
 
 export const UserControllers = {
-    createUser,
-    allUsers,
-    getSingleUser,
-    UpdateUser,
-    DeleteUser
-}
+  createUser,
+  getAllUsers,
+  getUserById,
+  blockUser,
+  unblockUser,
+  approveDriver,
+  suspendDriver,
+  updateDriverAvailability,
+  getMe
+};

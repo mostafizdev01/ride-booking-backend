@@ -1,39 +1,41 @@
-import { model, Schema } from "mongoose";
-import { IRider, IRiderStatus } from "./ride.interface";
+import { Schema, model } from "mongoose";
 
-
-const rideSchema = new Schema<IRider>({
-    user: {
-        type: Schema.Types.ObjectId,
-        ref: "user",
+const RideSchema = new Schema(
+  {
+    pickupLocation: {
+      lat: Number,
+      lng: Number,
+    },
+    destinationLocation: {
+      lat: Number,
+      lng: Number,
+    },
+    rider: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     driver: {
-        type: Schema.Types.ObjectId,
-        ref: "driver",
-    },
-    pickup: {
-        lat: { type: Number, required: true },
-        lng: { type: Number, required: true }
-    },
-    destination: {
-        lat: { type: Number, required: true },
-        lng: { type: Number, required: true }
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
     status: {
-        type: String,
-        enum: Object.values(IRiderStatus),
-        default: IRiderStatus.Requested
+      type: String,
+      enum: ["requested", "accepted", "picked_up", "in_transit", "completed", "cancelled"],
+      default: "requested",
     },
     timestamps: {
-        requestedAt: { type: Date, default: () => new Date() },
-        acceptedAt: Date,
-        pickedUpAt: Date,
-        completedAt: Date,
-        canceledAt: Date
-    }
-}, {
+      pickedUpAt: Date,
+      completedAt: Date,
+      cancelledAt: Date, // ✅ Add this here if you prefer to store inside "timestamps"
+    },
+    cancelledAt: {
+      type: Date, // ✅ OR add this if you want to store it separately
+    },
+  },
+  {
     timestamps: true,
-    versionKey: false
-})
+  }
+);
 
-export const Ride = model<IRider>("Ride", rideSchema)
+export const Ride = model("Ride", RideSchema);

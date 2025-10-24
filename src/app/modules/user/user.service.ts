@@ -1,95 +1,82 @@
-import { envVars } from "../../config/env";
-import { IAuthProvider, IUser } from "./user.interface";
-import { User } from "./user.model";
-import bcryptjs from "bcryptjs"
+import { User } from './user.model';
 
 
-const createUser = async (payload: Partial<IUser>) => {
+export const UserService = {
+  // 🔹 Get all users
+  async getAllUsers() {
+    return await User.find().select('-password'); // exclude password
+  },
 
-    const { email, password, ...rest } = payload;
+  // 🔹 Get a user by ID
+  async getUserById(id: string) {
+    return await User.findById(id).select('-password');
+  },
 
-    const isUserExist = await User.findOne({ email })
+  // 🔹 Block a user (admin)
+  async blockUser(id: string) {
+    return await User.findByIdAndUpdate(
+      id,
+      { isBlocked: true },
+      { new: true }
+    ).select('-password');
+  },
 
-    if (isUserExist) {
-        throw new Error("User Already Exist")
+  // 🔹 Unblock a user (admin)
+  async unblockUser(id: string) {
+    return await User.findByIdAndUpdate(
+      id,
+      { isBlocked: false },
+      { new: true }
+    ).select('-password');
+  },
+
+  // 🔹 Approve a driver (admin)
+  async approveDriver(id: string) {
+    const user = await User.findById(id);
+
+    if (!user || user.role !== 'driver') return null;
+
+    user.isApproved = true;
+    user.isBlocked = false;
+    return await user.save();
+  },
+
+  // 🔹 Suspend a driver (admin)
+  async suspendDriver(id: string) {
+    const user = await User.findById(id);
+
+    if (!user || user.role !== 'driver') return null;
+
+    user.isApproved = false;
+    user.isOnline = false;
+    return await user.save();
+  },
+
+  // 🔹 Update driver's availability (driver only)
+  async updateDriverAvailability(userId: string, isOnline: boolean) {
+    const user = await User.findById(userId);
+
+    if (!user || user.role !== 'driver' || !user.isApproved || user.isBlocked) {
+      return null;
     }
 
-    const hashedPassword = await bcryptjs.hash(password as string, Number(envVars.BCRYPT_SALT_ROUND))
+    user.isOnline = isOnline;
+    return await user.save();
+  }
+};
 
-    const authProvider: IAuthProvider = { provider: "credetials", providerId: email as string }
+const getMe = async (userId: string) => {
 
-    const user = await User.create({
-        email,
-        password: hashedPassword,
-        auths: [authProvider],
-        ...rest
-    })
+  const user = await User.findById(userId).select("-password");
+  
 
-    return user
-}
-
-
-/// Get All User
-const allUser = async () => {
-    const allUser = await User.find()
-    return allUser
-}
-
-/// Get single user
-const getSingleUser = async (payload: any) => {
-    const { email } = payload;
-    console.log(email);
-
-    const singleUser = await User.findOne({ email }).select("-password")
-
-    if (!singleUser) {
-        throw new Error("User not found!")
-    }
-
-    if (singleUser?.isDeleted) {
-        throw new Error("🧑‍🦯 Account is Deleted")
-    }
-
-    return singleUser
-}
-
-/// Update user
-const UpdateUser = async (userId: string, payload: Partial<IUser>) => {
-
-    const isUserExist = await User.findById(userId)
-
-    if (!isUserExist) {
-        throw new Error("User not found!")
-    }
-
-    if (isUserExist?.isDeleted) {
-        throw new Error("🧑‍🦯 Account is Deleted")
-    }
-
-    const newUpdateUser = await User.findByIdAndUpdate(userId, payload, { new: true, runValidators: true })
-
-    return newUpdateUser
-}
-
-/// Delete user
-const DeleteUser = async (id: string) => {
-
-    const isUserExist = await User.findById(id)
-
-    if (isUserExist?.isDeleted) {
-        throw new Error("🧑‍🦯 Account is Deleted")
-    }
-
-    const deletedUser = await User.findByIdAndUpdate({ _id: id }, { isDeleted: true }, { new: true, runValidators: true })
-
-    return deletedUser
-}
+  return {
+      data: user
+  }
+};
 
 
 export const UserServices = {
-    createUser,
-    allUser,
-    getSingleUser,
-    UpdateUser,
-    DeleteUser
+  UserService,
+  getMe
 }

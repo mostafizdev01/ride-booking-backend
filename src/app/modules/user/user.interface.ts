@@ -1,37 +1,42 @@
-import { Types } from "mongoose";
-
 export enum Role {
-    SUPER_ADMIN = "SUPER_ADMIN",
-    ADMIN = "ADMIN",
-    RIDER = "RIDER",
-    DRIVER = "DRIVER",
+  SUPER_ADMIN = 'super-admin',
+  ADMIN = 'admin',
+  RIDER = 'rider',
+  DRIVER = 'driver'
+}
+
+
+export interface IAuthProvider {
+  provider: 'google' | 'credentials';
+  providerId?: string;
 }
 
 export enum IsActive {
-    ACTIVE = "ACTIVE",
-    INACTIVE = "INACTIVE",
-    BLOCKED = "BLOCKED",
-}
-
-export interface IAuthProvider {
-    provider: "google" | "credetials";
-    providerId: string
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  BLOCKED = "BLOCKED",
 }
 
 export interface IUser {
-    _id: Types.ObjectId;
-    name: string;
-    email: string;
-    password?: string;
-    phone?: string;
-    picture?: string;
-    address?: string;
-    isDeleted?: boolean;
-    isActive?: IsActive;
-    isVerified?: boolean;
-    role: Role;
-    auths: IAuthProvider;
-    bookigs?: Types.ObjectId[];
-    guide?: Types.ObjectId[];
-    createdAt?: Date
+  _id?: string;
+  name: string;
+  email: string;
+  password?: string;
+  role?: Role;
+  isBlocked?: boolean;
+  isApproved?: boolean;
+  isActive?: IsActive;
+  vehicleInfo?: string;
+  totalEarnings?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+  auths?: IAuthProvider[];
+  isOnline?: boolean;
+}
+
+export interface IDriverExtra {
+  isApproved: boolean;
+  isOnline: boolean;
+  vehicleInfo: string;
+  totalEarnings?: number;
 }
