@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserService = void 0;
+exports.UserServices = exports.UserService = void 0;
 const user_model_1 = require("./user.model");
 exports.UserService = {
     // 🔹 Get all users
@@ -69,4 +69,14 @@ exports.UserService = {
             return yield user.save();
         });
     }
+};
+const getMe = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.User.findById(userId).select("-password");
+    return {
+        data: user
+    };
+});
+exports.UserServices = {
+    UserService: exports.UserService,
+    getMe
 };

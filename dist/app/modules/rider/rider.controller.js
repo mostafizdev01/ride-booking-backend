@@ -20,7 +20,7 @@ exports.RiderController = {
     getRideHistory: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
         try {
-            const riderId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+            const riderId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
             if (!riderId) {
                 return res.status(http_status_codes_1.default.UNAUTHORIZED).json({
                     success: false,

@@ -29,12 +29,11 @@ const user_model_1 = require("./user.model");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const env_1 = require("../../config/env");
-// 🚀 Register user (rider or driver)
+const apiResponse_1 = require("../../utils/apiResponse");
+const catchAsync_1 = require("../../utils/catchAsync");
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, email, password, role } = req.body;
-        // console.log(password);
-        // ✅ Basic validation
         if (!name || !email || !password || !role) {
             return res.status(http_status_codes_1.default.BAD_REQUEST).json({
                 success: false,
@@ -85,6 +84,17 @@ const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         });
     }
 });
+const getMe = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const decodedToken = req.user;
+    const result = yield user_service_1.UserServices.getMe(decodedToken.userId);
+    // console.log('000000',result);
+    (0, apiResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.default.CREATED,
+        message: "Your profile Retrieved Successfully",
+        data: result.data
+    });
+}));
 // ✅ Get user by ID (admin only)
 const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -236,4 +246,5 @@ exports.UserControllers = {
     approveDriver,
     suspendDriver,
     updateDriverAvailability,
+    getMe
 };

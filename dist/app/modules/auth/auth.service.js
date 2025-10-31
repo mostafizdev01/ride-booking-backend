@@ -8,47 +8,51 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthServices = exports.login = void 0;
+exports.AuthServices = void 0;
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_model_1 = require("../user/user.model");
-const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+const userToken_1 = require("../../utils/userToken");
+const credentialsLogin = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = payload;
     const isUserExist = yield user_model_1.User.findOne({ email });
-    // console.log('Login Input Password:', password);
-    // console.log('Hashed from DB:',);
     if (!isUserExist) {
-        throw new AppError_1.default(http_status_codes_1.default.UNAUTHORIZED, 'User Invalid credentials');
+        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Email does not exist");
     }
-    if (isUserExist.isBlocked) {
-        throw new Error('Your account is blocked');
-    }
-    if (!password || !isUserExist.password) {
-        throw new Error('No password found. You may have registered using Google. Please log in with Google or set a password.');
-    }
-    //   const isPasswordMatched = await bcrypt.compare(password, isUserExist.password);
-    //   console.log('Password Match:', password);
-    //   if (!isPasswordMatched) {
-    //        throw new AppError(httpStatus.BAD_REQUEST, "Incorrect Password")
+    // const isPasswordMatch = await bcrypt.compare(password as string, isUserExist.password as string)
+    // if (!isPasswordMatch) {
+    //   throw new AppError(httpStatus.BAD_REQUEST, "Password does not match")
     // }
-    const jwtPayload = {
-        userId: isUserExist._id,
-        email: isUserExist.email,
-        role: isUserExist.role
-    };
-    const accessToken = jsonwebtoken_1.default.sign(jwtPayload, "secret", {
-        expiresIn: "3d"
-    });
+    const userTokens = (0, userToken_1.createUserTokens)(isUserExist);
+    const _a = isUserExist.toObject(), { password: pass } = _a, rest = __rest(_a, ["password"]);
     return {
-        accessToken
+        accessToken: userTokens.accessToken,
+        refreshToken: userTokens.refreshToken,
+        user: rest
     };
 });
-exports.login = login;
+const getNewAccessToken = (refreshToken) => __awaiter(void 0, void 0, void 0, function* () {
+    const newAccessToken = yield (0, userToken_1.createNewAccessTokenWithRefreshToken)(refreshToken);
+    return {
+        accessToken: newAccessToken
+    };
+});
 exports.AuthServices = {
-    login: exports.login
+    credentialsLogin,
+    getNewAccessToken
 };

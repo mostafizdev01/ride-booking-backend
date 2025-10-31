@@ -68,7 +68,7 @@ userSchema.pre('save', function (next) {
 userSchema.methods.comparePassword = function (password) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!this.password)
-            return false; // password না থাকলে false
+            return false; // password false
         return yield bcrypt_1.default.compare(password, this.password);
     });
 };

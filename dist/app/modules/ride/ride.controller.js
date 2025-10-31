@@ -52,7 +52,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const requestRide = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const riderIdStr = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        const riderIdStr = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
         if (!riderIdStr) {
             return res.status(http_status_codes_1.default.UNAUTHORIZED).json({
                 success: false,
@@ -78,7 +78,7 @@ const requestRide = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 const cancelRide = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const riderIdStr = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        const riderIdStr = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
         if (!riderIdStr) {
             return res.status(http_status_codes_1.default.UNAUTHORIZED).json({
                 success: false,
@@ -104,7 +104,7 @@ const cancelRide = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 const getMyRides = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
-        const userIdStr = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        const userIdStr = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
         const role = (_b = req.user) === null || _b === void 0 ? void 0 : _b.role;
         if (!userIdStr) {
             return res.status(http_status_codes_1.default.UNAUTHORIZED).json({
@@ -130,7 +130,7 @@ const getMyRides = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 const acceptRide = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const driverIdStr = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        const driverIdStr = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
         if (!driverIdStr) {
             return res.status(http_status_codes_1.default.UNAUTHORIZED).json({
                 success: false,
@@ -156,7 +156,7 @@ const acceptRide = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 const updateRideStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const driverIdStr = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        const driverIdStr = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
         // 🛑 Validate if driverId exists
         if (!driverIdStr) {
             return res.status(http_status_codes_1.default.UNAUTHORIZED).json({

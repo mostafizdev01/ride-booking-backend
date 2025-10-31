@@ -7,7 +7,6 @@ import { createNewAccessTokenWithRefreshToken, createUserTokens } from "../../ut
 
 
 const credentialsLogin = async (payload: Partial<IUser>) => {
-
   const { email, password } = payload;
 
   const isUserExist = await User.findOne({ email })

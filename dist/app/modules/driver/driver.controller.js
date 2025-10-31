@@ -18,7 +18,7 @@ const driver_service_1 = require("./driver.service");
 const getProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const driverId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        const driverId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
         if (!driverId) {
             return res.status(http_status_codes_1.default.UNAUTHORIZED).json({
                 success: false,
@@ -42,7 +42,7 @@ const getProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 const getRides = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const driverId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        const driverId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
         if (!driverId) {
             return res.status(http_status_codes_1.default.UNAUTHORIZED).json({
                 success: false,
@@ -66,7 +66,7 @@ const getRides = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 const toggleAvailability = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const driverId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        const driverId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
         const { isOnline } = req.body;
         if (!driverId) {
             return res.status(http_status_codes_1.default.UNAUTHORIZED).json({
@@ -91,7 +91,7 @@ const toggleAvailability = (req, res) => __awaiter(void 0, void 0, void 0, funct
 const getEarnings = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const driverId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        const driverId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
         if (!driverId) {
             return res.status(http_status_codes_1.default.UNAUTHORIZED).json({
                 success: false,

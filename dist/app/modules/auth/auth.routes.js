@@ -4,15 +4,7 @@ exports.authRoutes = void 0;
 const express_1 = require("express");
 const auth_controller_1 = require("./auth.controller");
 const router = (0, express_1.Router)();
-router.post("/login", auth_controller_1.AuthController.login);
-// 🔹 Google Login Route
-// router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-// // 🔹 Google Callback Route
-// router.get(
-//   '/google/callback',
-//   passport.authenticate('google', { failureRedirect: '/login' }),
-//   (req, res) => {
-//     res.redirect('/dashboard'); // or return token for SPA
-//   }
-// );
+router.post("/login", auth_controller_1.AuthControllers.credentialsLogin);
+router.post("/refresh-token", auth_controller_1.AuthControllers.getNewAccessToken);
+router.post("/logout", auth_controller_1.AuthControllers.logout);
 exports.authRoutes = router;
