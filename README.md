@@ -17,6 +17,57 @@ A full-stack ride-booking platform that connects **riders** with available **dri
 ---
 
 ## ⚙️ Setup & Environment Instructions
+src/
+│
+├── app/
+│   ├── store.ts            # Redux store setup
+│   ├── hooks.ts            # Typed useAppDispatch/useAppSelector
+│
+├── features/
+│   ├── auth/
+│   │   ├── authApi.ts      # RTK Query endpoints for login/register/profile
+│   │   ├── authSlice.ts    # Redux state (if needed)
+│   │   └── LoginForm.tsx   # Component
+│   │
+│   ├── ride/
+│   │   ├── rideApi.ts      # Ride-related API (book, get rides, etc.)
+│   │   ├── RideCard.tsx    # Reusable component
+│   │   ├── RideList.tsx    # List of rides
+│   │   └── RideForm.tsx    # Booking form
+│
+├── components/
+│   ├── ui/                 # Buttons, Inputs, Modals, etc.
+│   │   ├── Button.tsx
+│   │   ├── Input.tsx
+│   │   ├── Modal.tsx
+│   │   └── Card.tsx
+│   │
+│   ├── layout/
+│   │   ├── Sidebar.tsx
+│   │   ├── Navbar.tsx
+│   │   └── DashboardLayout.tsx
+│
+├── pages/
+│   ├── Home.tsx
+│   ├── Login.tsx
+│   ├── Register.tsx
+│   └── dashboard/
+│       ├── RiderDashboard.tsx
+│       ├── BookRide.tsx
+│       ├── RideHistory.tsx
+│       └── Profile.tsx
+│
+├── routes/
+│   ├── ProtectedRoute.tsx   # Prevent unauthenticated access
+│   ├── RiderRoutes.tsx      # Rider-specific route config
+│
+├── utils/
+│   ├── token.ts             # Cookie or JWT utilities
+│   ├── constants.ts         # API URLs, config
+│   ├── helpers.ts           # Common helper functions
+│
+└── index.tsx
+
 
 ### ✅ Prerequisites
 - Node.js (v18+)
