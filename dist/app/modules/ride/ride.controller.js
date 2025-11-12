@@ -82,7 +82,7 @@ exports.updateRideStatus = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(
 }));
 // Rider: Cancel ride
 exports.cancelRide = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.body, req.params);
+    // console.log(req.body, req.params);
     const { reason } = req.body;
     const ride = yield ride_service_1.RideService.cancelRide(req.params.rideId, req.user.userId, reason);
     (0, sendResponse_1.sendResponse)(res, {
@@ -115,7 +115,7 @@ exports.getDriverRides = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(vo
 const getAllRides = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield ride_service_1.RideService.getAllRides(req.query);
-        console.log(result);
+        // console.log(result);
         res.status(http_status_codes_1.StatusCodes.OK).json({
             success: true,
             message: "All rides fetched successfully",

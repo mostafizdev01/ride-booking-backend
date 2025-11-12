@@ -62,18 +62,36 @@ const acceptRide = async (rideId: string, driverId: string) => {
 };
 
 const getSingleRide = async (driverId: string) => {
+  
+  console.log("driverId", driverId); 
 
   if (!driverId) throw new AppError(StatusCodes.BAD_REQUEST, "Driver ID is required");
 
-  const ride = await Ride.findOne({ driver: new Types.ObjectId(driverId) })
+  const ride = await Ride.find()
     .populate("rider", "name email phone")
     .populate("driver", "name email vehicleInfo")
     .sort({ createdAt: -1 });
   if (!ride) throw new AppError(StatusCodes.NOT_FOUND, "Ride not found");
-  if (ride.driver?._id?.toString() !== driverId)
-    throw new AppError(StatusCodes.FORBIDDEN, "You are not assigned to this ride");
   return ride;
 };
+
+/// Accept rides
+
+// const getSingleRide = async (driverId: string) => {
+  
+//   console.log("driverId", driverId); 
+
+//   if (!driverId) throw new AppError(StatusCodes.BAD_REQUEST, "Driver ID is required");
+
+//   const ride = await Ride.findOne({ driver: new Types.ObjectId(driverId) })
+//     .populate("rider", "name email phone")
+//     .populate("driver", "name email vehicleInfo")
+//     .sort({ createdAt: -1 });
+//   if (!ride) throw new AppError(StatusCodes.NOT_FOUND, "Ride not found");
+//   if (ride.driver?._id?.toString() !== driverId)
+//     throw new AppError(StatusCodes.FORBIDDEN, "You are not assigned to this ride");
+//   return ride;
+// };
 
 const getSingleRider = async (riderId: string) => {
 
@@ -112,7 +130,7 @@ const updateRideStatus = async (rideId: string, driverId: string, status: RideSt
 
 const cancelRide = async (rideId: string, riderId: string, reason?: string) => {
   const ride = await Ride.findById(rideId);
-  console.log(ride);
+  // console.log(ride);
   if (!ride) throw new AppError(StatusCodes.NOT_FOUND, "Ride not found");
   if (ride.rider.toString() !== riderId)
     throw new AppError(StatusCodes.FORBIDDEN, "You can't cancel this ride");

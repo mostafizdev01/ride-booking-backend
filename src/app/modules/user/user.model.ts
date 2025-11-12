@@ -40,7 +40,7 @@ const userSchema = new Schema<IUser>(
         },
         auths: { type: [authProviderSchema] },
         currentLocation: { type: locationSchema, },
-        isApproved: { type: Boolean, default: false },
+        isApproved: { type: Boolean, default: true },
         vehicleInfo: { type: vehicleInfoSchema },
         totalEarnings: { type: Number, default: 0 },
         rides: [{ type: Schema.Types.ObjectId, ref: "Ride" }],

@@ -114,7 +114,7 @@ const updateRideStatus = (rideId, driverId, status) => __awaiter(void 0, void 0,
 });
 const cancelRide = (rideId, riderId, reason) => __awaiter(void 0, void 0, void 0, function* () {
     const ride = yield ride_model_1.Ride.findById(rideId);
-    console.log(ride);
+    // console.log(ride);
     if (!ride)
         throw new AppHelpers_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, "Ride not found");
     if (ride.rider.toString() !== riderId)

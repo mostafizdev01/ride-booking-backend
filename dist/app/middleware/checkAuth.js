@@ -33,7 +33,7 @@ const checkAuth = (...authRoles) => (req, res, next) => __awaiter(void 0, void 0
         //     throw new AppError(httpStatus.BAD_REQUEST, `User is ${isUserExist.isActive}`)
         // }
         if (!authRoles.includes(verifyToken.role)) {
-            console.log(authRoles.includes(verifyToken.role));
+            // console.log(authRoles.includes(verifyToken.role));
             throw new AppHelpers_1.default(http_status_codes_1.default.BAD_REQUEST, "You are not promoted in this user");
         }
         req.user = verifyToken;

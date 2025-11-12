@@ -87,7 +87,7 @@ export const updateRideStatus = catchAsync(async (req: Request, res: Response) =
 
 // Rider: Cancel ride
 export const cancelRide = catchAsync(async (req: Request, res: Response) => {
-  console.log(req.body, req.params);
+  // console.log(req.body, req.params);
   const { reason } = req.body;
   const ride = await RideService.cancelRide(req.params.rideId, (req.user as any).userId, reason);
   sendResponse(res, {
@@ -123,7 +123,7 @@ export const getDriverRides = catchAsync(async (req: Request, res: Response) => 
 export const getAllRides = async (req: Request, res: Response) => {
   try {
     const result = await RideService.getAllRides(req.query as Record<string, string>);
-    console.log(result);
+    // console.log(result);
     res.status(StatusCodes.OK).json({
       success: true,
       message: "All rides fetched successfully",
